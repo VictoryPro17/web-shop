@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom Victoryss Manga Store Styles */
+body {
+    font-family: 'Figtree', 'Inter', 'Segoe UI', Arial, sans-serif;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    background: #e0f2fe;
+}
+::-webkit-scrollbar-thumb {
+    background: #22c55e;
+    border-radius: 8px;
+}
+
+/* Button Glow Effect */
+.btn-glow {
+    box-shadow: 0 4px 24px 0 rgba(34,197,94,0.18);
+}
