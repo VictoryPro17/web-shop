@@ -1,37 +1,65 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="flex flex-col items-center w-full min-h-screen bg-gradient-to-br from-emerald-50 via-lime-100 to-white">
-    <section class="w-full max-w-7xl mt-12 px-4">
-        <h1 class="text-5xl md:text-7xl font-black text-center text-green-800 mb-8 leading-tight">Willkommen bei Victoryss Manga Store</h1>
-        <p class="text-xl md:text-2xl text-center text-gray-700 mb-12">Dein moderner Manga-Shop für exklusive Titel, Sammlerstücke und mehr!</p>
-        <!-- Top-Bücher Karussell -->
+@php
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
+$top = Http::get('https://api.jikan.moe/v4/top/manga', ['limit'=>6])->json('data') ?? [];
+$popular = Http::get('https://api.jikan.moe/v4/top/manga', ['limit'=>30, 'page'=>2])->json('data') ?? [];
+shuffle($popular);
+$popular = array_slice($popular, 0, 3);
+$showAbo = auth()->check() && (auth()->user()->is_abo ?? false);
+$fixedPrice = 12.99;
+$aboPrice = number_format($fixedPrice * 0.9, 2);
+@endphp
+<div class="flex flex-col items-center w-full min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+    <section class="w-full max-w-7xl mt-32 px-4">
+        <h1 class="text-5xl md:text-7xl font-black text-center text-white mb-8 leading-tight">Willkommen bei Victoryss Manga Store</h1>
+        <p class="text-xl md:text-2xl text-center text-gray-300 mb-12">Entdecke die besten Manga, sichere dir exklusive Vorteile und genieße modernes Shopping!</p>
         <div class="mb-16">
-            <h2 class="text-3xl font-bold text-green-700 mb-4">Top Manga</h2>
+            <h2 class="text-3xl font-bold text-white mb-4">Top Manga</h2>
             <div class="flex gap-6 overflow-x-auto pb-4 snap-x">
-                @for ($i = 1; $i <= 6; $i++)
-                <div class="min-w-[220px] max-w-xs bg-white rounded-2xl shadow-lg p-4 flex flex-col items-center snap-center">
-                    <img src="https://placehold.co/200x300?text=Manga+{{$i}}" alt="Manga {{$i}}" class="rounded-xl mb-3 shadow-md">
-                    <div class="font-bold text-lg text-gray-900 mb-1">Manga Titel {{$i}}</div>
-                    <div class="text-green-700 font-semibold mb-2">€{{ 9.99 + $i }}</div>
-                    <a href="/product/{{$i}}" class="bg-green-600 hover:bg-lime-500 text-white px-4 py-2 rounded-lg font-semibold transition">Details</a>
-                </div>
-                @endfor
+                @foreach($top as $manga)
+                    <div class="min-w-[220px] max-w-xs bg-gray-800 rounded-2xl shadow-lg p-4 flex flex-col items-center snap-center">
+                        <img src="{{ $manga['images']['jpg']['large_image_url'] ?? '' }}" alt="{{ $manga['title'] }}" class="rounded-xl mb-3 shadow-md" style="height:300px;width:200px;object-fit:cover;">
+                        <div class="font-bold text-lg text-white mb-1">{{ $manga['title'] }}</div>
+                        <div class="mb-2">
+                            @if($showAbo)
+                                <span class="text-gray-400 line-through mr-2">€{{ number_format($fixedPrice,2) }}</span>
+                                <span class="text-blue-400 font-bold">€{{ $aboPrice }}</span>
+                            @else
+                                <span class="text-blue-400 font-bold">€{{ number_format($fixedPrice,2) }}</span>
+                            @endif
+                        </div>
+                        <a href="{{ route('product.show', $manga['mal_id']) }}" class="text-blue-400 hover:underline text-sm">Details</a>
+                    </div>
+                @endforeach
             </div>
         </div>
-        <!-- Abo-Bereich -->
-        <div class="bg-gradient-to-r from-green-200 via-lime-100 to-white rounded-2xl shadow-xl p-10 flex flex-col md:flex-row items-center justify-between gap-8 mb-16">
-            <div class="flex-1">
-                <h3 class="text-2xl font-bold text-green-800 mb-2">Victoryss Abo</h3>
-                <p class="text-lg text-gray-700 mb-4">Sichere dir exklusive Vorteile: Zugang zu limitierten Manga, Rabatte und mehr!</p>
-                <ul class="list-disc ml-6 text-green-700 mb-4">
-                    <li>Exklusive Manga kaufen</li>
-                    <li>Rabatte auf Neuheiten</li>
-                    <li>Früher Zugang zu Releases</li>
-                </ul>
-                <a href="/abo" class="bg-green-600 hover:bg-lime-500 text-white px-6 py-3 rounded-full font-bold text-lg transition">Abo sichern</a>
+        <div class="mb-16">
+            <h2 class="text-2xl font-bold text-white mb-4">Beliebte Manga</h2>
+            <div class="flex gap-6 overflow-x-auto pb-4 snap-x">
+                @foreach($popular as $manga)
+                    <div class="min-w-[180px] max-w-xs bg-gray-800 rounded-2xl shadow-lg p-3 flex flex-col items-center snap-center">
+                        <img src="{{ $manga['images']['jpg']['large_image_url'] ?? '' }}" alt="{{ $manga['title'] }}" class="rounded-xl mb-2 shadow-md" style="height:220px;width:150px;object-fit:cover;">
+                        <div class="font-bold text-base text-white mb-1">{{ $manga['title'] }}</div>
+                        <div class="mb-2">
+                            @if($showAbo)
+                                <span class="text-gray-400 line-through mr-2">€{{ number_format($fixedPrice,2) }}</span>
+                                <span class="text-blue-400 font-bold">€{{ $aboPrice }}</span>
+                            @else
+                                <span class="text-blue-400 font-bold">€{{ number_format($fixedPrice,2) }}</span>
+                            @endif
+                        </div>
+                        <a href="{{ route('product.show', $manga['mal_id']) }}" class="text-blue-400 hover:underline text-xs">Details</a>
+                    </div>
+                @endforeach
             </div>
-            <img src="https://placehold.co/220x320?text=Abo+Manga" alt="Abo Manga" class="rounded-xl shadow-lg">
+        </div>
+        <div class="max-w-2xl mx-auto mt-16 bg-blue-900 bg-opacity-80 rounded-2xl shadow-xl p-8 text-white text-center">
+            <h3 class="text-2xl font-bold mb-2">Abo-Vorteil</h3>
+            <p class="mb-4 text-blue-200">Mit Abo erhältst du 10% Rabatt auf alle Manga und exklusive Neuerscheinungen!</p>
+            <a href="/abo" class="bg-blue-600 hover:bg-blue-500 text-white px-8 py-3 rounded-full font-bold text-lg transition">Abo sichern</a>
         </div>
     </section>
 </div>
