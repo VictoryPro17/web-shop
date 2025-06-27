@@ -86,7 +86,7 @@ $popular = array_slice($popular, 0, 3);
     <section class="w-full flex flex-col items-center justify-center py-24 bg-gradient-to-br from-gray-800 via-gray-900 to-gray-800">
         <div class="w-full max-w-3xl mx-auto bg-gray-800/80 rounded-2xl shadow-xl p-10 flex flex-col items-center animated-partner-panel">
             <div class="flex items-center gap-4 mb-4">
-                <img src="/logo.png" class="h-12" alt="ibis acam Logo">
+               
                 <span class="text-white text-xl font-bold">ibis acam</span>
                 <span class="text-gray-400">&</span>
                 <span class="text-white text-xl font-bold">Victory</span>
