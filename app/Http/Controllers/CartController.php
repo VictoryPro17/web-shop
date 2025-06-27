@@ -20,6 +20,30 @@ class CartController extends Controller
     public function add(Request $request)
     {
         $cart = session('cart', []);
+        // Sonderaktion: 3 Manga für 5 € als Bundle
+        if ($request->input('special_offer') == 1 && is_array($request->input('ids'))) {
+            $ids = $request->input('ids');
+            $titles = $request->input('titles');
+            $images = $request->input('images');
+            $specialPrice = floatval($request->input('special_price', 5.00));
+            $bundleTitle = 'Sonderaktion: 3 Manga-Set';
+            $bundleDesc = implode(' + ', array_map(function($t){return $t;}, $titles));
+            $cart[] = [
+                'id' => implode('-', $ids),
+                'title' => $bundleTitle,
+                'image' => $images[0] ?? '',
+                'price' => $specialPrice,
+                'quantity' => 1,
+                'bundle' => true,
+                'bundle_titles' => $titles,
+                'bundle_images' => $images,
+                'bundle_ids' => $ids,
+                'bundle_desc' => $bundleDesc,
+            ];
+            session(['cart' => $cart]);
+            return redirect()->route('shop')->with('success', 'Sonderaktion: 3 Manga für 5 € zum Warenkorb hinzugefügt!');
+        }
+        // Standard: Einzel-Manga
         $quantity = max(1, intval($request->input('quantity', 1)));
         $cart[] = [
             'id' => $request->input('id'),
