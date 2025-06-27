@@ -5,8 +5,9 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
+                    <a href="/" class="flex items-center gap-2 group">
+                        <svg class="w-8 h-8 text-yellow-400 group-hover:scale-110 transition-transform animate-blitz" fill="none" stroke="#facc15" stroke-width="2.5" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8L21 10h-8l1-8z" fill="#facc15"/></svg>
+                        <span class="text-2xl font-black text-yellow-400 tracking-tight drop-shadow-lg">DarkStorm</span>
                     </a>
                 </div>
 
@@ -98,3 +99,15 @@
         </div>
     </div>
 </nav>
+
+<style>
+@keyframes blitz {
+    0%,100% { filter: drop-shadow(0 0 0 #facc15); opacity:1; }
+    10% { filter: drop-shadow(0 0 16px #facc15); opacity:0.7; }
+    20% { filter: drop-shadow(0 0 32px #facc15); opacity:1; }
+    30% { filter: drop-shadow(0 0 8px #facc15); opacity:0.8; }
+    40% { filter: drop-shadow(0 0 24px #facc15); opacity:1; }
+    50% { filter: drop-shadow(0 0 0 #facc15); opacity:1; }
+}
+.animate-blitz { animation: blitz 2.2s infinite; }
+</style>

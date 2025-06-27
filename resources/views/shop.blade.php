@@ -32,12 +32,22 @@ if($search) {
         <input type="text" name="q" value="{{ $search }}" placeholder="Manga suchen..." class="w-96 px-4 py-2 rounded-l bg-gray-800 text-white focus:outline-none" autocomplete="off">
         <button class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded-r font-bold">Suchen</button>
     </form>
+    <!-- Swipebare Pagination: Mobile = swipe, Desktop = Buttons -->
     <div class="flex justify-center mb-8 gap-2 items-center">
-        <a href="?q={{ urlencode($search) }}&page={{ max(1, $page-1) }}" class="px-3 py-1 rounded bg-gray-700 text-gray-300 hover:bg-blue-500 hover:text-white @if($page==1) opacity-50 pointer-events-none @endif">&laquo;</a>
-        @for ($p = max(1, $page-2); $p <= min($totalPages, $page+2); $p++)
-            <a href="?q={{ urlencode($search) }}&page={{ $p }}" class="px-3 py-1 rounded @if($page==$p) bg-blue-600 text-white @else bg-gray-700 text-gray-300 hover:bg-blue-500 hover:text-white @endif">{{ $p }}</a>
-        @endfor
-        <a href="?q={{ urlencode($search) }}&page={{ min($totalPages, $page+1) }}" class="px-3 py-1 rounded bg-gray-700 text-gray-300 hover:bg-blue-500 hover:text-white @if($page==$totalPages) opacity-50 pointer-events-none @endif">&raquo;</a>
+        <!-- Mobile: swipebar -->
+        <div class="flex gap-2 overflow-x-auto scrollbar-hide md:hidden w-full max-w-xs" style="-webkit-overflow-scrolling: touch;">
+            @for ($p = max(1, $page-2); $p <= min($totalPages, $page+2); $p++)
+                <a href="?q={{ urlencode($search) }}&page={{ $p }}" class="px-3 py-1 rounded @if($page==$p) bg-blue-600 text-white @else bg-gray-700 text-gray-300 hover:bg-blue-500 hover:text-white @endif whitespace-nowrap mx-0.5">{{ $p }}</a>
+            @endfor
+        </div>
+        <!-- Desktop: klassische Buttons -->
+        <div class="hidden md:flex gap-2">
+            <a href="?q={{ urlencode($search) }}&page={{ max(1, $page-1) }}" class="px-3 py-1 rounded bg-gray-700 text-gray-300 hover:bg-blue-500 hover:text-white @if($page==1) opacity-50 pointer-events-none @endif">&laquo;</a>
+            @for ($p = max(1, $page-2); $p <= min($totalPages, $page+2); $p++)
+                <a href="?q={{ urlencode($search) }}&page={{ $p }}" class="px-3 py-1 rounded @if($page==$p) bg-blue-600 text-white @else bg-gray-700 text-gray-300 hover:bg-blue-500 hover:text-white @endif">{{ $p }}</a>
+            @endfor
+            <a href="?q={{ urlencode($search) }}&page={{ min($totalPages, $page+1) }}" class="px-3 py-1 rounded bg-gray-700 text-gray-300 hover:bg-blue-500 hover:text-white @if($page==$totalPages) opacity-50 pointer-events-none @endif">&raquo;</a>
+        </div>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-6xl mx-auto">
         @forelse ($mangas as $manga)
